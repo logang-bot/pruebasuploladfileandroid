@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private MainActivity root;
     private String mediaPath, postPath;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,25 +67,33 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
+                //CONVERT
+                //name
+                RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"), "nombre1");
+                //email
+                RequestBody email = RequestBody.create(MediaType.parse("multipart/form-data"), "email1");
+                //password
+                RequestBody password = RequestBody.create(MediaType.parse("multipart/form-data"), "password1");
+                //sex
+                RequestBody sex = RequestBody.create(MediaType.parse("multipart/form-data"), "sex1");
+                //address
+                RequestBody address = RequestBody.create(MediaType.parse("multipart/form-data"), "address1");
 
 
-                //convert
-                /*File path = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);*/
-                File file = new File("/storage/emulated/0/" + postPath);
+                //img
+                File file = new File(postPath);
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
                 MultipartBody.Part body = MultipartBody.Part.createFormData("img", file.getName(), requestFile);
-                //convert
+                //CONVERT
 
-                //int permissionCheck = ContextCompat.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getApplicationContext(), "no permission", Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 225);
                 } else {
                     Call<RequestBody> call = RetrofitClient
                             .getInstance()
-                            .getApi().uploadImage(body);
+                            .getApi().uploadImage(name,email,password,sex,address,body);
 
                     call.enqueue(new Callback<RequestBody>() {
                         @Override
@@ -101,23 +108,6 @@ public class MainActivity extends AppCompatActivity {
                     });
                     Log.i("Mensaje", "Se tiene permiso para leer!");
                 }
-
-                /*Call<RequestBody> call = RetrofitClient
-                        .getInstance()
-                        .getApi().uploadImage(body);
-
-                call.enqueue(new Callback<RequestBody>() {
-                    @Override
-                    public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
-                        Toast.makeText(root, "imagen subida", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<RequestBody> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), t.getMessage() + "--" + imagenUri.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });*/
-
             }
         });
 
@@ -126,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "select images"), PICK_IMAGE);
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
     }
 
     @Override
@@ -158,8 +149,8 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 File file = new File(uri.getPath());//create path from uri
                 final String[] split = file.getPath().split(":");//split the path.
-                String filePath = split[1];//assign it to a string(your choice).
-                postPath = filePath;
+                //String filePath = split[1];//assign it to a string(your choice).
+                postPath = file.getPath().substring(4);
                 Toast.makeText(getApplicationContext(), postPath, Toast.LENGTH_LONG).show();
             }
         }

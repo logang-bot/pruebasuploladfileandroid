@@ -10,5 +10,11 @@ import retrofit2.http.Part;
 public interface Api {
     @Multipart
     @POST("img/updateavatar")
-    Call<RequestBody> uploadImage(@Part MultipartBody.Part part);
+    Call<RequestBody> uploadImage(
+            @Part("name") RequestBody name,
+            @Part("email") RequestBody email,
+            @Part("password") RequestBody password,
+            @Part("sex") RequestBody sex,
+            @Part("address") RequestBody address,
+            @Part MultipartBody.Part part);
 }
