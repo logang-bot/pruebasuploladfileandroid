@@ -124,9 +124,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
-        ClipData clipdata = data.getClipData();
+        if(requestCode == PICK_IMAGE){
+            if(resultCode == RESULT_OK){
+                ClipData clipdata = data.getClipData();
+                if(clipdata == null){
+                    imagenUri = data.getData();
 
-        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
+                /*Uri selectedImage = imagenUri;
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                Cursor cursor = getContentResolver().query(imagenUri, filePathColumn, null, null, null);
+                assert cursor != null;
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                mediaPath = cursor.getString(columnIndex);
+                // Set the Image in ImageView for Previewing the Media
+                //imageView.setImageBitmap(BitmapFactory.decodeFile(mediaPath));
+                cursor.close();
+
+                postPath = mediaPath;*/
+                    Uri uri = data.getData();
+                    File file = new File(uri.getPath());//create path from uri
+                    final String[] split = file.getPath().split(":");//split the path.
+                    //String filePath = split[1];//assign it to a string(your choice).
+                    postPath = file.getPath().substring(4);
+                    Toast.makeText(getApplicationContext(), postPath, Toast.LENGTH_LONG).show();
+                }
+                img.setImageURI(imagenUri);
+            }
+            else
+                Toast.makeText(getApplicationContext(), "cancelado", Toast.LENGTH_LONG).show();
+        }
+
+        /*if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             //Toast.makeText(this, "---", Toast.LENGTH_SHORT).show();
             //one
             if(clipdata == null){
@@ -145,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 //imageView.setImageBitmap(BitmapFactory.decodeFile(mediaPath));
                 cursor.close();
 
-                postPath = mediaPath;*/
+                postPath = mediaPath;
                 Uri uri = data.getData();
                 File file = new File(uri.getPath());//create path from uri
                 final String[] split = file.getPath().split(":");//split the path.
@@ -154,6 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), postPath, Toast.LENGTH_LONG).show();
             }
         }
-        img.setImageURI(imagenUri);
+        img.setImageURI(imagenUri);*/
     }
 }
