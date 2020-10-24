@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 //convert
                 /*File path = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES);*/
-                File file = new File(postPath);
-                RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+                File file = new File("/storage/emulated/0/" + postPath);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
                 MultipartBody.Part body = MultipartBody.Part.createFormData("img", file.getName(), requestFile);
                 //convert
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<RequestBody> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), t.getMessage() + "--" + imagenUri.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                     Log.i("Mensaje", "Se tiene permiso para leer!");
@@ -141,8 +141,7 @@ public class MainActivity extends AppCompatActivity {
             if(clipdata == null){
                 imagenUri = data.getData();
 
-
-                Uri selectedImage = data.getData();
+                /*Uri selectedImage = imagenUri;
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 Cursor cursor = getContentResolver().query(imagenUri, filePathColumn, null, null, null);
@@ -155,7 +154,13 @@ public class MainActivity extends AppCompatActivity {
                 //imageView.setImageBitmap(BitmapFactory.decodeFile(mediaPath));
                 cursor.close();
 
-                postPath = mediaPath;
+                postPath = mediaPath;*/
+                Uri uri = data.getData();
+                File file = new File(uri.getPath());//create path from uri
+                final String[] split = file.getPath().split(":");//split the path.
+                String filePath = split[1];//assign it to a string(your choice).
+                postPath = filePath;
+                Toast.makeText(getApplicationContext(), postPath, Toast.LENGTH_LONG).show();
             }
         }
         img.setImageURI(imagenUri);
